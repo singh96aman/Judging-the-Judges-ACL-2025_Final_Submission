@@ -1,0 +1,26 @@
+\section {Related work}\label{sec:relatedwork}
+
+Various recent studies have used or considered using LLMs as judges for tasks such as evaluating story generation \citep{chiang2023can}, retrieval-augmented generation \citep{es2023ragas},  visual QA \citep{maas2024improving}, code comprehension \citep{yuan2023evaluating}, multilingual evaluation \citep{hada2023large} and more general open-ended tasks \citep{zheng2024judging}.
+\citet{Zhang2024LLMEval} and \citet{sottana2023evaluation} propose ways to standardise LLM evaluations and the role that \judgemodels might play in such solutions.
+Several studies have demonstrated that state-of-the-art LLMs such as \gpt exhibit high alignment with human judgments \citep{sottana2023evaluation,zheng2024judging}, though others also illustrate that the paradigm is not yet without faults.
+\citet{zeng2023evaluating} propose a benchmark for evaluating the performance of LLMs as judges, and other approaches have been proposed to improve LLM judges such that they are aligned well with humans \citep{shankar2024validates,zhu2023judgelm}.
+
+Despite promising results in various settings, \judgemodels still suffer from known issues of current LLMs such as hallucinations and factual errors \citep{ye2023cognitive, turpin2023language} and difficulty in following complex instructions \citep{li2023instruction, he2024can}. 
+Furthermore, various studies have reported challenges such as position bias \citep{pezeshkpour2023large,zheng2023large,wang2023large}, verbosity bias \citep{saito2023verbosity} in their preferences, confusing evaluation criteria \citep{hu2024llm}, or focusing more on the style and grammar compared to factuality \citep{wu2023style}.
+Recently, \citet{liusie2024llm} have shown that LLMs perform better in comparative assessment compared to absolute scoring, which can be used for reliably measuring the relative performance of models \citep{liu2024aligning} and creating classifiers for pairwise grading 
+\citep{llmasclassifier}.
+
+We build on previous work to investigate the strengths and weaknesses of LLMs as judges. Unlike previous studies, we focus on comparing LLM outputs with reference answers rather than pairwise comparisons on open-ended tasks. With high human alignment in this setting, we gain a clearer view of LLM performance. Furthermore, we extend previous research by considering more LLMs, both as judges and as evaluated models.
+
+% We follow up on this line of work and investigate the strengths and weaknesses of LLMs as judges.
+% Unlike most prior work, we do not focus on pairwise comparisons of LLM outputs on open-ended tasks, but on comparisons of LLM outputs and reference answers.
+% Since human alignment is high in this setting, this provides a clean playground to study the strengths and weaknesses of LLMs in detail.
+% We also extend previous work by considering more LLMs, both as judges and LLMs to be evaluated.
+
+% The judges are evaluated not only with percent agreement, but also with \emph{Cohen's kappa coefficient} \citep{cohen1960kappa} which is commonly considered more robust, and the way they rank different models, which as we will see may sometimes paint vastly different pictures.
+
+% However, the strengths, weaknesses and biases of this \emph{LLM-as-a-judge} paradigm have not been studied in detail.
+% Prior work has demonstrated that LLMs such as \judge{GPT-4} exhibit high alignment with humans in such tasks when used as a judge \citep{sottana2023evaluation,zheng2024judging}. 
+% Despite promising results in various settings, \judgemodels still suffer from the issues of current LLMs, such as hallucinations and factual errors \citep{ye2023cognitive, turpin2023language} and difficulty in following complex instructions \citep{li2023instruction, he2024can}. Moreover, use of LLMs as judges can give rise to unique challenges such as exhibiting position bias \citep{pezeshkpour2023large} and verbosity bias \citep{saito2023verbosity} in their preference, confusing the evaluation criteria \citep{hu2024llm}, or focusing more on the style and grammar of the response compared to its factuality \citep{wu2023style}.
+% % However, the strengths, weaknesses and biases of this \emph{LLM-as-a-judge} paradigm have not been studied in detail.
+

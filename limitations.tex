@@ -1,0 +1,58 @@
+\section{Limitations}\label{app:limitations}
+
+In our work, we have evaluated how 11 different LLMs fare as judges in a scenario in which judgements should be relatively straight-forward, and human alignment is high.
+As any study, our work has several limitations as well as directions that we did not explore but would have been interesting too.
+In this section, we discuss both.
+
+\paragraph{Simplicity of the task}
+As mentioned in the introduction of our work, the scenario in which judges are used are typically much more complicated than the scenario that we focussed on.
+Specifically, judges are most often deployed in preference rankings (where two model responses are compared) or to judge complex answers that are difficult to automatically parse.
+In such tasks, human agreement is often low, making it challenging to judge the judges themselves.
+In our work, we have deliberately chosen for a simple task, in which human alignment is high.
+The main premise is, that if a judge does not perform well in this simple setup, caution is suggested also in more complex setups -- if someone cannot do multiplication, why would they be able to solve ordinary differential equations.
+Given the poor understanding of which abilities of LLMs generalise in what dimensions, however, more studies are needed to understand how our results generalise to various other scenarios.
+
+\paragraph{Human alignment}
+In an earlier version of this paper, due to the high cost of human annotations, we opted to select a single model for human annotation as we iteratively modified the exam taker prompt, few-shot examples, and guidelines. 
+We selected the \eval{Llama2 7B} for this purpose with a random sample of 600 questions.
+As this is only a single model, it is possible that our human alignment scores are biased because of that.
+After, we have therefore extended our results with another 600 human-annotated examples from \eval{Llama3.1 70B}.
+
+% This choice was made to establish a lower bound on human alignment by utilizing one of the smallest base models available. 
+For \eval{Llama2 7B} The average alignment among human evaluators had a \scottspi of $96.36\pm1.46$,%
+and the average percent agreement was $98.33\%\pm0.76\%$.
+For \eval{Llama3.1 70B}, we noted that the average alignment among human evaluators had \scottspi of $95.78\pm0.30$,\% and the average percent agreement was $98.72\%\pm0.10\%$.
+Given the similarity of these two numbers, we believe that these 1200 samples provide an adequate estimate.
+In the paper, we take the average.
+% Larger models typically achieve higher Exact Match (EM) scores, which often results in a smaller sample size needed for human annotations.  
+% Before finalizing this methodology, we experimented with different chat models and GPT-4 but did not observe any appreciable difference in human alignment
+
+\paragraph{Size of the judged samples}
+As each of the \nexamtakersword \evaluatormodels requires human annotations for each sample, we restricted our analysis to 400 samples in total.
+This sample size also allowed us to conduct manual annotations and error analysis within 75 human hours/200 GPU hours (see \cref{app:experiment-costs}) and give reliable confidence intervals while also providing the flexibility to compare a range of models. 
+We were not able to increase the size due to the cost, but a statistical analysis (details provided in \cref{app:downsamplingstddev}) illustrated that the variance because of this sample size was very low.
+
+\paragraph{Selection of judges}
+With our selection of judges, we have stuck to autoregressive judges that can be used off-the-shelve, as well as one LLM specifically trained to judge.
+They are -- at the moment of writing -- the ones that are most commonly used as LLM-judges, and we have tried to be comprehensive across size and family.
+Nevertheless, we acknowledge that there are other judges that we could have considered as well.
+As including more judges in -- compared to including more \evaluatormodels -- relatively straightforward because it requires only computational power, no manual annotation, we hope that others may evaluate their newly proposed judges using our setup as well.
+
+% Similarly, We focused on the TriviaQA \cite{joshi2017triviaqa} dataset exclusively due to its clear references and structured questions, which ensured high inter-human annotator agreement. 
+% In contrast, our experiments with other QA datasets like Natural Questions \cite{kwiatkowski2019natural} often faced challenges with question ambiguity, resulting in lower agreement among human annotators. 
+% By choosing TriviaQA, we aimed to establish strong baselines with straightforward guidelines, allowing for consistent evaluations across different models without the confounding factor of ambiguous questions.
+% In reporting our primary findings, we acknowledge in methodology (\cref{sec:methodology}) that the prompt template used in \cref{app:judge-prompt-template} is not as detailed as the human guidelines outlined in \cref{app:human_annotation_guidelines}. To address this, we conducted a parallel experiment using the human annotation guidelines in \judgemodels prompts. Our hope was to improve the judges' ability to assess underspecified or overspecified answers and responses with excessive verbosity. With human guidelines, we noticed that the "Contains" lexical match performed better. However, smaller models like Gemma 2B \citep{gemma2024gemma} and Judge LM 7B \citep{zhu2023judgelm} showed poor alignment with human annotators, achieving less than 20\%. This result supports our earlier concerns mentioned in \cref{sec:analysis:subsec:instructions}, where we pointed out that smaller models have difficulty following complex and nuanced instructions.
+
+% From \cref{fig:llmalignment_w_human_guidelines}, it is evident that although this approach enhances the performance of the "Contains" judge, smaller models experience significant degradation. This finding aligns with our concerns noted in \cref{sec:analysis:subsec:instructions}, where we highlighted that smaller models struggle to follow complex and nuanced instructions.
+
+% \centering
+% \begin{figure}[h!]
+%     \centering
+% \includegraphics[width=0.7\textwidth, height=9cm]{figures/LLMAlignment_With_HumanGuidelines.pdf} 
+%     \caption{ Kappa scores (red bars) and percent agreement (blue line) for difference judges when run with human guidelines. This setup skews judges like contains closer to human alignment but leads to worse alignment for EM (upto $\sim$ 30 points deviation from mean) and smaller judge models like Gemma 2B (1\%) \& JudgeLM-7B (18\%)}
+%     \label{fig:llmalignment_w_human_guidelines}
+% \end{figure}
+
+\paragraph{Future work}
+All in all, these differences underline how finicky using LLMs as judges can be, and with that confirm the overall conclusions of our study that much more work is needed to better understand the strengths and limitations of judge models across a wide range of scenarios and model accuracies.
+We consider assessing the strengths across multiple different samples and tasks, which would require many more human annotations, outside the scope of this paper and leave such experimentation for future work.

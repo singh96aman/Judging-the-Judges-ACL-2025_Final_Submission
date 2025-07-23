@@ -1,0 +1,258 @@
+\section{Results} \label{sec:results}
+
+% \setlength{\textfloatsep}{10pt}
+In this section we discuss our main results, primarily focusing on the relationship between evaluations by various \judgemodels and human evaluations (\cref{sec:results:exploringhumanjudgellmalignment}), and how that impacts their usability (\cref{sec:results:exploringsystematicpatterns}).
+To do so, we evaluate their alignment with human judgment and assess how differently they rank the \nexamtakersword \evaluatormodels compared to humans.
+In Section \ref{sec:analysis}, we further analyse their precision and recall to further investigate the types of errors that can be made by various \judgemodels. Details about compute requirements and others costs for experiments are given in \cref{app:experiment-costs}.
+
+% \subsection{How well are various judges aligned with humans?}
+\subsection{Alignment between \judgemodels and humans}
+% \subsection{Human - \JudgeModel Alignment}
+\label{sec:results:exploringhumanjudgellmalignment}
+
+We start by computing \scottspi scores and percent agreement between the evaluations of each \judgemodel and the human annotators. %for all \evaluatormodels. 
+We show the result in \cref{fig:llmalignment}.
+We observe that percent alignment is high for virtually all models, with the exception of \judge{Gemma\;2B} and \judge{EM}.
+\scottspi, on the other hand, has low values for most models, though its value is in the high 80s for \judge{Llama-3\;70B}, \judge{Llama-3.1\;70B}  and \judge{\gpt}. %  have \scottspi scores -- 88, 88 and 87, respectively -- that are considered to indicate excellent alignment.
+Nevertheless, there still is a significant disparity between human judgment and \judgemodels: the best scoring judge, \judge{Llama-3\;70B}, is 8 points behind human judgment. 
+Notably, \judge{EM} has the most variance in alignment, while \judge{Gemma\;2B} has the lowest alignment amongst all judges.
+% \sout{Notably, \judge{contains} has a higher \cohenskappa score than half of the \judgemodels}, while \judge{EM} has the lowest alignment among all judges. 
+
+% \paragraph{\scottspi vs percent agreement}
+
+In most cases, we observe that \scottspi and percent agreement are following the same trend, with the exception of the values for \judge{Gemma\;2B} and \judge{EM}.
+\judge{Gemma\;2B} shows higher percent agreement compared to \judge{EM}, yet it yields the lowest \scottspi score within the ensemble.
+% Furthermore, there is a significant difference in the actual values.
+For the percent agreement of judge models, we note a 26-point difference between human judgment and EM, while \scottspi exhibits a more substantial 64-point gap. 
+This is also visible in the general decline of alignment scores: while \judge{Llama-3\;8B} has a \scottspi score of only 59, its percent agreement is still well above 80\%.
+Overall, \scottspi appears to be better able of discriminating various judge models, showing more divergence across the tested judges.
+% From \cref{fig:llmalignment_b}, we can also observe that the greater the deviation of judges from human judgments, the more significant the variation in their \cohenskappa scores becomes.
+
+To understand how indicative the two alignment metrics are of the expected accuracy of the overall judgement of the models, we plot, for each \judgemodel and \evaluatormodel, the difference between the score assigned by the judge and the score assigned by a human.
+In the figure, we can see that for \scottspi values higher than 80, the evaluation scores are comparatively close to the human evaluation scores, with a difference of up to 5 points in their assigned scores (complete results table provided in \cref{app:all_scores}). % TODO check!
+For percent alignment, on the other hand, even judges that have more than 90\% may still differ more than 10 points in their assigned score.
+% 
+% \paragraph{Alignment vs assigned score}
+% In \cref{fig:cohenskappa}, we show the variation in scores assigned by the \judgemodels to various \evaluatormodels for different values of percent agreement (\cref{fig:cohenskappa_part1}) and Scott's pi (\cref{fig:cohenskappa_part2}).
+% To get a better idea of how much variation in actual assigned scores can be expected given a particular kappa, we plot the differences between scores provided by judges and those from human assessment across a range of judge kappa scores, in \cref{fig:cohenskappa} (assigned scores per model can be found in \cref{fig:llmalignment_a}).
+% \dieuwke{TODO: make y-axis log-scale}.
+%\sout{
+% We can see that for \scottspi > 80, the evaluation scores by \judgemodels are close to the human evaluation scores for most of the judges, with a difference of up to 5 points in their assigned scores (complete results table provided in \cref{app:all_scores}).
+%}
+% For percent agreement we observe deviations of up to 20 points in the evaluation scores for similar scott's pi alignment.
+Interestingly, %, for several \judgemodels, 
+the deviation from human-judgements for a single judge model can be quite different depending on the \evaluatormodel.
+% is quite distinct for different \evaluatormodels.
+In \cref{fig:llmalignment_a}, \judge{Gemma\;2B}, for instance, sometimes assigns higher scores than humans, and sometimes much lower. 
+In the next section, we further explore this particular pattern.
+
+% \subsection{How does this impact their usability?}
+\subsection{Exploring consistent patterns in \judgemodels} \label{sec:results:exploringsystematicpatterns}
+
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=\linewidth]{figures/JudgeScoreforExamTakers.png}
+%     \caption{ We plot the delta between Judge exam scores and human assessment for various exam takers.Judge LLMs exhibit diverse distributions and rankings across different exam-taker, none of which exactly mirror the assessments of human judges. However, well aligned tend to consistently score more than the human assessment. \dieuwke{Invert this so that i) the exam taker models are on the y-axis, and the colour indicates the judges, and ii) put the actual score, not the delta.} \dieuwke{Potentially: put next to the figure with the rankings.}}
+%     \label{fig:assigned_scores}
+% \end{figure}
+
+
+In the previous section, we saw that none of the \judgemodels were as aligned with humans as humans were with each other. As shown in \cref{fig:alignment_vs_delta}, even the best-aligned \judgemodels can differ by up to 5 points from human-assigned scores. While this limits their ability to perfectly estimate \evaluatormodel capabilities, \judgemodels can still provide valuable insights to \textit{differentiate} between \evaluatormodels. For example, judges with consistent biases may not assign identical scores but could rank models similarly, akin to a very strict teacher.
+
+To assess this, we compare the rankings given by each \judgemodel to the nine \evaluatormodels, computing Spearman's rank correlation coefficients $\rho$ \citep{spearman1904spearman} with the human ranking. The rankings are shown in \cref{fig:rankcorrelation}, with $\rho$ and $\sigma$ values in \cref{app:correlationcoefftable}. Most \judgemodels have rank correlations above 0.7, indicating they struggle to distinguish poorer models but do well with better ones. Notably, models like \judge{contains} and \judge{Mistral 7B}, which have divergent scores from humans, show high rank correlation ($\rho$ of 0.99 and 0.98, respectively), performing similarly to \judge{\gpt} and outperforming the better \judge{Llama} models -- though with lower significance values -- indicating that identifying which models are better should not be equated to assigning them the correct score.
+
+% In the previous section, we have seen that none of the \judgemodels we considered were aligned with humans as well as the humans were aligned amongst themselves.
+% Furthermore, as can be seen in \cref{fig:alignment_vs_delta}, the scores assigned by even the best aligned \judgemodels can differ up to 5 points with the human-assigned scores.
+% However, while this may limit -- to some extent -- the utility of using a \judgemodels to get a perfect estimate of the \evaluatormodel's capability on the benchmark, the \judgemodels may still offer valuable insights to \textit{differentiate} between different \evaluatormodels.
+% %For example, 
+% If judges exhibit consistent biases such as -- akin to a very strict teacher -- consistently rating any \evaluatormodel lower, they will not assign identical scores but may assign identical \textit{rankings}.
+
+% To evaluate this, we compare the rankings assigned by each \judgemodel to the nine \evaluatormodels by computing their Spearman's rank correlation coefficients $\rho$ \citep{spearman1904spearman} with the human ranking. 
+% We show the rankings in \cref{fig:rankcorrelation}, with $\rho$ and corresponding $\sigma$ values in \cref{app:correlationcoefftable}. 
+% Most \judgemodels have rank correlations higher than 0.7; it appears they struggle to distinguish between poorer-performing \evaluatormodels, but do well at distinguishing between better-performing ones.
+% Notably, the results show that several models that assign scores quite divergent from humans and have poor alignment on the sample level are very aligned in terms of the rankings they assign.
+% Specifically, both \judge{contains} and \judge{Mistral 7B}, with \scottspi values of 64 and 66, respectively, exhibit very high rank correlation with the human scores ($\rho$ 0.99 and 0.98, respectively, with $\sigma$ 0.02 and 0.03).
+% With that, these judges perform on par with \judge{\gpt} and outperform the better \judge{Llama} judges -- though with lower significance values -- indicating that identifying which models are better should not be equated to assigning them the correct score.
+
+
+% Generally, even smaller judges appear to be good at distinguishing higher performing models, but struggle more when performance is lower.
+
+% These results show that \judge{contains} demonstrates the highest alignment with the human ranking, swapping the ranks of only two out of nine models. 
+%\sout{
+% Notably, \judge{contains} performs on par with \judge{\gpt} and \judge{Mistral 7B}, the judges with the best alignment.
+% Most \judgemodels have rank correlations higher than 0.7; it appears they struggle to distinguish between poorer-performing \evaluatormodels, but do well at distinguishing between better-performing ones.
+% We see that all best-aligning judges are consistent in their ranking of the top two models: they all agree that, of the models evaluated, GPT4 is the best performing model, followed by Llama2-70b-base.
+% Below the top two, there are more changes.
+% The GPT-4 and Llama3 have the same three models in spot three, four and five as the human judge, but both with different orders.
+% Generally, judges appear worse at distinguishing poorer performing models than better-performing models.
+
+% Classical lexical models fare even worse with greater misalignment with human judgement across the board, with the -- commonly used -- EM score not even agreeing on the top-performing model.
+
+
+% \begin{table}[h]
+%     \centering
+%     \begin{tabular}{|c|c|}
+%     \hline
+%     \textbf{Model} & \textbf{Spearman Rank Correlation Coeff} \\
+%     \hline
+%     Human Alignment & 100 \\
+%     GPT-4 & 99.17 \\
+%     Llama3-70B & 99.17 \\
+%     Llama-70B & 81.67 \\
+%     Mistral-7B & 77.50 \\
+%     Contains & 41.67 \\
+%     Llama-7B & 85.00 \\
+%     Llama3-8B & 42.50 \\
+%     JudgeLM-7B & 59.17 \\
+%     Llama-13B & 18.33 \\
+%     EM & 65.83 \\
+%     Gemma-2B & 48.33 \\
+%     \hline
+%     \end{tabular}
+%     \caption{Judges sorted by Kappa Human Alignment and their Spearman Rank Correlation Coeff}
+%     \label{tab:scores_multiplied}
+% \end{table}
+
+% \begin{figure}[h]
+%     \centering
+%     \begin{minipage}[b]{0.49\textwidth}
+%         \centering
+%         \includegraphics[width=\linewidth]{figures/InterLLMAlignment.png}
+%         \caption{Inter Judge Alignment}
+%         \label{fig:interllmalignment}
+%     \end{minipage}
+%     \hfill
+%     \begin{minipage}[b]{0.49\textwidth}
+%         \centering
+%         \includegraphics[width=\linewidth]{figures/RankCorrelationCoeff.png} 
+%         \caption{Judge Ranking over Evaluation Models}
+%         \label{fig:rankcorrelation}
+%     \end{minipage}
+% \end{figure}
+
+% \subsubsection{Precision, Recall \& False Positives}
+
+% Using the human judgement, we calculate the precision, recall and false positive rate to quantify judge LLM performance. To understand the precision-recall tradeoff, we plot the precision and recall rates and maintain The ordering of LLMs from Figure \ref{fig:llmalignment}. We can observe in figure \ref{fig:precisionrecall}, when LLMs become more aligned with human judgment, their recall improves. Precision, on the other hand, remains relatively consistent across all LLMs due to balancing effect of increase in true positive and false positives. From figure \ref{fig:confusionmatrix}, we can observe increase in true positives but not a similar reverse trend in False Positive. Instead, we see that the False Negatives are decreasing with increase in human alignment for Judges. 
+
+% \begin{figure}[h]
+%     \centering
+%     \begin{minipage}[b]{\textwidth}
+%         \centering
+%         \includegraphics[width=\linewidth]{figures/PrecisionRecall_V4.png}
+%         \caption{Precision \& recall with increasing human alignment}
+%         \label{fig:precisionrecall}
+%     \end{minipage}
+% \end{figure}
+
+% \begin{figure}[h]
+%     \centering
+%     \begin{minipage}[b]{\textwidth}
+%         \centering
+%         \includegraphics[width=\linewidth]{figures/ConfusionMatrixV2.png}
+%         \caption{Judge performance \& error rate with increasing human alignment }
+%         \label{fig:confusionmatrix}
+%     \end{minipage}
+% \end{figure}
+
+
+
+
+% To explore the variability in scores among LLMs within the same cluster, we focus on the first group comprising Llama2-80B, Llama3-80B, Mistral-7B, and GPT-4, plotting their evaluation scores. Figure Y illustrates that despite similar Kappa scores for identical questions and evaluation models, judges' responses yield disparate evaluator results. In the worst-case scenario, these results can differ by up to 10 points
+
+% \begin{figure}[h]
+%     \centering
+%     \begin{minipage}[b]{\textwidth}
+%         \centering
+%         \includegraphics[width=\linewidth]{figures/VariationofScores.png}
+%         \caption{Variation of Scores for similar Kappa Scores}
+%         \label{fig:llmalignment}
+%     \end{minipage}
+% \end{figure}
+
+% In our study, we investigated nine evaluation models and anticipated consistency in the ranking of judges across each model. To verify this assumption, we assessed the ranking of each judge across the different evaluation models. Recognizing the possibility of unchanging rankings (no variance), we computed and plotted the Spearman Rank Correlation Coefficient (cite) across the 12 judges. Spearman Rank Correlation is valuable as it gauges the degree to which the relationship between two variables can be described using a monotonic function. A Spearman Rank Correlation exceeding 0.7 indicates a strong correlation, a common occurrence in robust benchmarks. However, the plotted data in Figure (cite) reveals fluctuations in rankings among the remaining evaluators.
+
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.6\textwidth]{figures/score-kappa-0.png}
+%     \caption{Scores assigned by different evaluators vs their alignment with human evaluations}
+%     \label{fig:score-kappa-0}
+% \end{figure}
+
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.6\textwidth]{figures/score-kappa-1.png}
+%     \caption{Scores assigned by different evaluators vs their alignment with human evaluations}
+%     \label{fig:score-kappa-0}
+% \end{figure}
+
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.6\textwidth]{figures/score-kappa-2.png}
+%     \caption{Scores assigned by different evaluators vs their alignment with human evaluations}
+%     \label{fig:score-kappa-0}
+% \end{figure}
+
+
+
+
+
+% OLD STUFF
+
+
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=\textwidth]{figures/humanalignment_withem.png}
+%     \caption{Human Alignment w GT}
+%     \label{fig:human}
+% \end{figure}
+
+% \begin{table}[h]
+%     \centering
+%     \caption{Percentage Alignment}
+%     \label{tab:my_table}
+%     \begin{tabular}{cccccc}
+%         \toprule
+%         \textbf{Scenario} & \textbf{Avg Alignment} & \textbf{Human-A} & \textbf{Human-S} & \textbf{Human-K} & \textbf{Avg Size} \\
+%         \midrule
+%         All Questions & 98.33 & 97.33 & 98.5 & 99.17 & 600 \\
+%         Low Confidence & 98.92 & 99.51 & 97.7 & 99.53 & 214 \\
+%         High Confidence & 98.05 & 96.22 & 98.95 & 98.96 & 386 \\
+%         \bottomrule
+%     \end{tabular}
+% \end{table}
+
+% \begin{table}[htbp]
+%     \centering
+%     \begin{tabular}{cccccc}
+%         \toprule
+%         \textbf{Scenario} & \textbf{Avg Alignment} & \textbf{Human-A} & \textbf{Human-S} & \textbf{Human-K} & \textbf{Avg Size} \\
+%         \midrule
+%         All Questions & 96.75 & 94.81 & 97.08 & 98.38 & 308 \\
+%         Low Confidence & 98.92 & 99.51 & 97.71 & 99.53 & 214 \\
+%         High Confidence & 92.34 & 85.71 & 95.56 & 95.74 & 94 \\
+%         \bottomrule
+%     \end{tabular}
+%     \caption{Without EM - Percentage Alignment}
+%     \label{tab:my_table2}
+% \end{table}
+
+% \begin{table}[htbp]
+%     \centering
+%     \caption{Kappa Scores}
+%     \label{tab:my_table2}
+%     \begin{tabular}{cccccc}
+%         \toprule
+%         \textbf{Scenario} & \textbf{Avg Kappa} & \textbf{Human-A} & \textbf{Human-S} & \textbf{Human-K} & \textbf{Avg Size} \\
+%         \midrule
+%         All Questions & 96.36 & 94.14 & 96.75 & 98.19 & 600 \\
+%         All Questions - EM & 92.38 & 88.06 & 92.96 & 96.13 & 600 \\
+%         \bottomrule
+%     \end{tabular}
+% \end{table}
+
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{figures/HumanHeatMap.png}
+%     \caption{Human Alignment with Kappa Scores}
+%     \label{fig:human}
+% \end{figure}

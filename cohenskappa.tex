@@ -1,0 +1,36 @@
+\section{A brief explanation of the theoretical issues with Cohen's kappa}\label{app:cohenslimitation}
+
+Cohen's Kappa Coefficient \citep{cohen1960kappa} is a statistic to measure inter-rater agreement for categorical responses.
+Cohen's Kappa coefficient measures this agreement by computing the observed (percent) agreement between raters ($p_o$) and comparing it with the hypothetical probability of chance agreement ($p_e$), which is taken as a baseline, as follows:
+\begin{equation}
+\kappa \equiv \frac{p_o - p_e}{1 - p_e}
+\end{equation}
+
+In this equation, the chance agremeent $p_o$ constitutes the hypothetical probability that observed agreement occurred by chance, given the observed distributions of the considered raters, under the assumption that the probabilities the raters assign to the observed labels are independent.
+Specifically, it is defined as:
+
+\begin{equation*}
+\begin{aligned}
+p_e &= \sum_k \widehat{p_{k12}} =^{ind} \sum_k \widehat{p_{k1}} \widehat{p_{k2}} \\
+    &= \sum_k \frac{n_{k1}}{N} \cdot \frac{n_{k2}}{N}
+     = \frac{1}{N^2} \sum_k n_{k1} n_{k2}
+\end{aligned}
+\end{equation*}
+
+where $\widehat{p_{k12}}$ is the estimated probability that rater 1 and rater 2 will classify the same item as $k$, rewritten to $\widehat{p_{k1}}\widehat{p_{k2}}$ under the assumption that $p_{k1}$ and $p_{k2}$ are independent.
+The crux of the issue with this method of computation, is that $\widehat{p_{k1}}$ and $\widehat{p_{k2}}$ are estimated independently from the data.
+As such, the chance agreement adjusts for the observed average differences between raters, which is in fact part of what we intend to measure.
+
+To address this issue, Scott's Pi \citep{scott1995scottspi} instead defines the chance baseline under the assumption that the raters have the same distribution, which is estimated considering the joint distribution of rater 1 and rater 2, rather than considering them separately.
+It defines $p_e$ as:
+
+\begin{equation}
+p_e = \sum_k \widehat{p_k^2} = \sum_k \sum_k (\frac{n_{k1} + n_{k2}}{2N})^2
+\end{equation}
+
+As such, contrary to Cohen's Kappa, it captures differences surpassing the chance agreement if rater 1 and rater 2 were in fact equivalent.
+In other words, we compare against a baseline in which raters would be equivalent, and we measure how much they deviate from that.
+
+Note that if the empirical distributions of rater 1 and rater 2 are the same, so will the values of Scott's Pi and Cohen's Kappa be.
+This also implies that for larger observed (percent) alignment values, the values for Cohen's Kappa and Scott's Pi will be closer.
+

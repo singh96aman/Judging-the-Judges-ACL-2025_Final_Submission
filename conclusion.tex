@@ -1,0 +1,49 @@
+\section {Conclusion}\label{sec:conclusion}
+
+In this work, we conduct an extensive study of LLMs as judges, comparing them to human judges and automated evaluation methods. By focusing on a clean evaluation scenario with high inter-human agreement, we identify potential issues with the LLM-as-a-judge paradigm, separate from task ambiguity.
+
+We find that smaller, cost-efficient models, like \judge{Mistral;7B}, are less effective than larger models such as \judge{\gpt}, \judge{Llama-3.1;70B}, and \judge{Llama-3;70B}, which are better aligned but still fall short of human alignment. Even with high alignment, their scores can differ by up to 5 points from human scores, highlighting the need for caution when using judges in more complex scenarios. We also note that the commonly used metric of \textit{percent aligned} fails to differentiate between judges effectively. We suggest future work adopt the more robust \scottspi metric for better distinction.
+
+Next, we note that high alignment scores are not always necessary to \textit{discriminate} between models. While \judge{\gpt} and \judge{Llama-3} have excellent alignment scores, simpler and more cost-efficient models, like \judge{contains}, perform similarly in ranking \evaluatormodels, despite lower alignment scores and score deviations. For studies focused on ranking models rather than estimating exact scores, these approaches can be as suitable as more expensive ones.
+
+Lastly, we run experiments to assess judge models' sensitivity to prompts, precision, recall, error types, leniency, and vulnerability to dummy answers. We find that smaller models are more likely to judge positively when in doubt, that lower-alignment models lack precision, and that better models are more robust across different prompts but harder to "steer." Some \judgemodels are easily fooled by dummy answers like \texttt{''Yes''} and \texttt{''Sure''} and are better at detecting completely incorrect answers than partially incorrect ones.
+
+Overall, this work contributes to LLM evaluation by assessing judges in a clearly defined framework. Our results highlight the potential of LLMs as judges but caution against blindly trusting their judgments, even when aligned with humans. We recommend computing both percent agreement and \scottspi, paired with qualitative analysis, to avoid bias. We discuss limitations in \cref{app:limitations} and plan to expand our work to more complex scenarios in the future.
+
+%%%%%%%
+% In this work, we provide an extensive study of the properties of LLMs as judges, comparing them with human judges as well as automated evaluation methods.
+% By focusing on a clean evaluation scenario in which inter-human agreement is high, we examine the potential issues with the LLM-as-a-judge paradigm, separately from the ambiguity and subjectivity in the task itself.
+% %
+% We find that even in straightforward setups, smaller and more cost-efficient models are less effective judges compared to the best available LLMs, such as \judge{Mistral\;7B}.
+% \judge{\gpt}, \judge{Llama-3.1\;70B} and \judge{Llama-3\; 70B}, instead, are much better aligned, though they are still quite far from the alignment that humans have among each other.
+% In some cases, despite their high alignment, their scores deviate from human scores with up to 5 points.
+% Given the relative simplicity of the scenarios in which we deployed the judges, urging caution in using judge for more complex scenarios.
+% Importantly, we noted that such patterns are virtually undetectable using the commonly deployed metric of \textit{percent aligned}, which barely discrimates between the considered judges.
+% We suggest that future work instead considers the more robust metric \scottspi, which allows to distinguish judges much better.
+
+% Next, we note that to \textit{discriminate} between models, high alignment scores are not an absolute necessity.
+% While \judge{\gpt} and \judge{Llama-3} both have excellent alignment scores, simpler and more cost-efficient and even the lexical matching method \judge{contains} perform on par when discriminating between the \evaluatormodels in terms of their \textit{ranking}, despite having much lower alignment scores and score deviations.
+% If the purpose of a study is to determine which model is better and not to estimate their actual scores, such approaches may thus be as suitable as the more expensive ones.
+
+% Lastly, we run a range of experiments to investigate judge models' sensitivity to prompts, their precision and recall, their error types, how lenient they are, and how much they can be fooled by dummy answers. 
+% We find that LLMs tend to judge positively when in doubt, and this is more pronounced for small models than for larger ones; that judge models with lower alignment lack precision rather than recall, that better models are generally more robust across different prompts, but are difficult to `steer' in their judgments; that some \judgemodels can be easily fooled by dummy answers such as \texttt{`Yes'} and \texttt{`Sure'}; and that \judgemodels are better at detecting completely incorrect answers than partially incorrect ones.
+ 
+% Overall, this work adds to the realm of LLM evaluation research by assessing judges within a clearly defined and objective framework. Our results highlight the utility of using some LLMs as judges but also urge caution in blindly trusting their judgments, even if they are found to be well-aligned with humans.
+% For practitioners using LLMs as judges -- regardless of the setup -- we recommend not only computing percent agreement, but also \scottspi, and pairing these with a qualitative analysis to ensure that conclusions from \judgemodels are less susceptible to biases. We further elaborate on the limitations of our work in \cref{app:limitations}. In the future, we plan to expand our work to increasingly more complex scenarios with more open-ended answers and variability and more generally assess how consistent our findings are across dataset samples, benchmarks, and prompt templates.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Our emphasis is on evaluating the inherent abilities of \judgemodels rather than their proficiency in assessing other LLMs. Understanding how judge LLMs operate and perform in objective settings helps establish benchmarks for their reliability and fairness. This knowledge is crucial for ensuring that AI systems, including those used in legal and decision-making contexts, uphold principles of transparency, accountability, and fairness.
+
+% We also find that Judge LLMs are highly sensitive to prompt variations, with performance declining with overly complex or ambiguous instructions. Furthermore, our comparison highlights the consistent underperformance of fine-tuned models compared to pre-trained ones in objective assessments. These findings underscore the need for refinement in automatic grading system and use of Judge LLMs.
+
+
+
+% In conclusion, we report that evaluations from different judges align poorly with human judgement. Judge LLMs do not exhibit any signs of systematic biases that may help us make an argument to use them. We also 
+
+% \kc{Basically summarize here what are the answers that we found for the research questions that we put forward in the Experiments section. All answers should directly follow form the results of the experiments we performed.}
+
+
+% textbf{1)} How well do the evaluations from different judges align with human evaluations? \textbf{2)} How is a alignment of evaluations related to the alignment of the final scores given by the judges? \textbf{3)} How similar are the rankings of evaluation models generated by the judge models compared to the rankings by humans? \textbf{4)} How sensitive are the judge models to the specific prompt provided to them to give a judgement? \textbf{5)} What are the similarities and differences in the mistakes made by different judges?
+
+% \subsection{Future Work}
+% These baseline results are a lot different from the previous run I did, with the difference being a slight change in the template (delimiting the questions, answers and references with “```” ), and skipping high ref count questions (although I don’t think the second change would make a difference). So that shows that the exact template used can be a big factor in the evaluations, and even GPT-4 is susceptible to small changes in the template.
